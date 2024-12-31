@@ -120,3 +120,40 @@ button:hover {
 .next-button-container {
     text-align: center;
 }
+
+/* Side-by-Side Layout */
+.side-by-side-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Space between the items */
+    margin-top: 20px;
+}
+
+.side-by-side-container img {
+    width: 200px; /* Adjust size of the images */
+    height: auto;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
+}
+
+.side-by-side-container img:hover {
+    transform: scale(1.05); /* Slightly enlarge on hover */
+    border-color: #0077b6; /* Highlight border on hover */
+}
+
+#quiz-container img {
+    display: block;
+    margin: 20px auto;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    width: 150px; /* Adjust size as needed */
+    height: auto;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+#quiz-container img:hover {
+    transform: scale(1.05);
+    border-color: #0077b6;
+}
