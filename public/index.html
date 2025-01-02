@@ -7,22 +7,20 @@
     <link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
-    <header>
-        <h1>Find Your Premier League Team!</h1>
-        <p>Answer a few questions to discover which team is your perfect match.</p>
-    </header>
     <main id="main-container">
-        <div id="quiz-container">
-            <!-- Questions load dynamically here -->
+        <div id="home-screen">
+            <h1 id="title">Join the millions of fans across the globe</h1>
+            <p id ="subtitle">Find out which Premier League team is perfect for you</p>
+            <button id="start-quiz-button">Start Quiz</button>
+        </div>
+        <div id="quiz-container" class="hidden">
+            <!-- Quiz content dynamically loads here -->
         </div>
         <div id="progress-container">
             <div id="progress-bar"></div>
-            <p id="progress-text">0% complete</p>
+        <p id="progress-text">0% complete</p>
         </div>
     </main>
-    <footer>
-        <p>&copy; 2024 Premier League Quiz</p>
-    </footer>
     <script type="module" src="/src/script.js"></script>
 </body>
 </html>

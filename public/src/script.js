@@ -1,3 +1,29 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const homeScreen = document.getElementById("home-screen");
+    const quizContainer = document.getElementById("quiz-container");
+    const progressContainer = document.getElementById("progress-container");
+    const startButton = document.getElementById("start-quiz-button");
+
+    // Start Quiz Button Click Handler
+    startButton.addEventListener("click", () => {
+        // Hide the home screen
+        homeScreen.classList.add("hidden");
+
+        // Show the quiz container and progress bar
+        setTimeout(() => {
+            homeScreen.style.display = "none"; // Completely hide the home screen
+            quizContainer.style.display = "block"; // Display the quiz
+            progressContainer.style.display = "block"; // Display the progress bar
+            document.body.classList.add("quiz-active"); // Trigger grey background
+            loadQuestion(); // Start the quiz
+        }, 500); // Match the fade-out transition duration
+    });
+
+    initializeTeams(); // Initialize team data
+});
+
+
+
 const questions = [
     {
         question: "Where do you want your club to be located?",
@@ -82,17 +108,25 @@ function initializeTeams() {
     eligibleTeams = [...allTeams];
 }
 
+
+// Update Progress
 // Update Progress
 function updateProgress() {
     const progressBar = document.getElementById("progress-bar");
     const progressText = document.getElementById("progress-text");
 
-    const progress = ((currentQuestionIndex / (questions.length + 3)) * 100).toFixed(0); // +3 for final three questions
+    // Total number of questions (regular + final three)
+    const totalQuestions = questions.length + 3; // +3 for final three questions
+    const progress = ((currentQuestionIndex / totalQuestions) * 100).toFixed(0);
+
+    // Update text
     progressText.textContent = `${progress}% complete`;
 
+    // Update progress bar width (revealing gradient from left to right)
     progressBar.style.width = `${progress}%`;
-    progressBar.style.background = `linear-gradient(to right, red, orange, green ${progress}%)`;
 }
+
+
 
 // Load a Question
 function loadQuestion() {
@@ -194,6 +228,10 @@ function askKitPreference(topTeams) {
     const container = document.getElementById("quiz-container");
     container.innerHTML = "";
 
+    // Update progress bar
+    currentQuestionIndex++; // Increment the question index for progress
+    updateProgress();
+
     const questionElement = document.createElement("h2");
     questionElement.textContent = "Which of these kits do you prefer?";
     container.appendChild(questionElement);
@@ -219,6 +257,10 @@ function askKitPreference(topTeams) {
 function askManagerPreference(topTeams) {
     const container = document.getElementById("quiz-container");
     container.innerHTML = "";
+
+    // Update progress bar
+    currentQuestionIndex++; // Increment the question index for progress
+    updateProgress();
 
     const questionElement = document.createElement("h2");
     questionElement.textContent = "Which of these men do you trust more?";
@@ -246,6 +288,10 @@ function askManagerPreference(topTeams) {
 function askNicknamePreference(topTeams) {
     const container = document.getElementById("quiz-container");
     container.innerHTML = "";
+
+    // Update progress bar
+    currentQuestionIndex++; // Increment the question index for progress
+    updateProgress();
 
     const questionElement = document.createElement("h2");
     questionElement.textContent = "Choose one of these club nicknames?";
