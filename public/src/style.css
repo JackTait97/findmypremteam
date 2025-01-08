@@ -4,11 +4,30 @@ body {
     margin: 0;
     padding: 0;
     line-height: 1.6;
-    height: 100vh; /* Ensure the body takes up the full height */
+    height: 100vh;
     overflow: hidden; /* Prevent scrolling */
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+/* Fade-out effect for home screen */
+.fade-out {
+    opacity: 0;
+    transition: opacity 2.5s ease;
+}
+
+/* Fade-in effect for quiz container */
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 3.5s forwards;
+}
+
+/* Fade-in animation for quiz elements */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
 }
 
 /* Home Screen Styles */
@@ -17,16 +36,53 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    position: absolute; /* Ensure it covers the entire screen */
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%; /* Full screen height */
-    background-image: url('/stadium_background_test.jpg'); /* Replace with the correct image path */
+    height: 100%;
+    background-image: url('/stadium_background_test.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     text-align: center;
+    opacity: 1; /* Ensure it's initially visible */
+    transition: opacity 5.5s ease;
+}
+
+/* Quiz Container Hidden by Default */
+#quiz-container {
+    display: none;
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    text-align: center;
+    opacity: 0; /* Hidden initially */
+}
+
+/* Progress Bar Hidden by Default */
+#progress-container {
+    display: none;
+    width: 100%;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Progress Bar */
+#progress-bar {
+    height: 100%;
+    background: black;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+
+#progress-text {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #343a40;
 }
 
 /* Title Styles */
@@ -35,74 +91,6 @@ body {
     color: white;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     margin-bottom: 5px; /* Reduced margin to bring subtitle closer */
-}
-
-/* Subtitle Styles */
-#subtitle {
-    font-size: 14px;
-    color: white;
-    margin-top: 0; /* Ensure there's no extra margin above */
-    margin-bottom: 25px;
-}
-
-/* Main Container for Quiz Page */
-#main-container {
-    background-color: transparent; /* Start with no background color */
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    transition: background-color 0.5s ease; /* Smooth transition to grey */
-}
-
-.quiz-active #main-container {
-    background-color: #f5f5f5; /* Light grey background after quiz starts */
-}
-
-/* Quiz Page Hidden by Default */
-#quiz-container {
-    display: none; /* Hide by default */
-    width: 100%;
-    max-width: 800px;
-    padding: 20px;
-    background: none; /* Remove background color */
-    border: none; /* Remove border */
-    text-align: center;
-}
-
-/* Progress Bar Hidden by Default */
-#progress-container {
-    display: none; /* Initially hidden */
-    width: 100%; /* Full width of the progress bar */
-    height: 20px;
-    background-color: #e0e0e0; /* Background color for the container */
-    border-radius: 10px;
-    overflow: hidden; /* Ensures only the visible part of the progress bar is shown */
-    position: relative;
-}
-
-.quiz-active #progress-container {
-    display: block; /* Show when quiz starts */
-}
-
-#progress-bar {
-    height: 100%; /* Match the height of the container */
-    background: linear-gradient(to right, red, orange, green); /* Full gradient background */
-    width: 0%; /* Start with no visible progress */
-    transition: width 0.3s ease; /* Smooth reveal */
-    border-radius: 10px; /* Match the container's border radius */
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-#progress-text {
-    margin-top: 15px;
-    font-size: 14px;
-    color: #343a40;
 }
 
 /* Start Quiz Button Animation */
@@ -162,12 +150,29 @@ body {
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.2s;
+    margin-left: 30px;
+    margin-top: 30px;
 }
 
 .next-question-button:hover {
     background-color: #004c00;
 }
 
+.back-question-button {
+    padding: 10px 20px;
+    background-color: #a10202; /* Dark green */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+    margin-top: 30px;
+}
+
+.back-question-button:hover {
+    background-color: #830202;
+}
 /* Side-by-Side Layout for Final Questions */
 .side-by-side-container {
     display: flex;
@@ -188,4 +193,41 @@ body {
 .side-by-side-container img:hover {
     transform: scale(1.05); /* Slightly enlarge on hover */
     border-color: #0077b6;
+}
+
+/* Question History Container */
+#question-history {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f0f0f0;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.history-item:hover {
+    background-color: #e0e0e0;
+}
+
+.history-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.dropdown-arrow {
+    font-size: 18px;
+    color: #666;
+    cursor: pointer;
 }
