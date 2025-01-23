@@ -20,6 +20,7 @@ body {
 /* Fade-in effect for quiz container */
 .fade-in {
     opacity: 0;
+    transition: opacity 3.5s ease;
     animation: fadeIn 3.5s forwards;
 }
 
