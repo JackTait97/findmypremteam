@@ -1,3 +1,31 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const homeScreen = document.getElementById("home-screen");
+    const quizContainer = document.getElementById("quiz-container");
+    const progressContainer = document.getElementById("progress-container");
+    const startButton = document.getElementById("start-quiz-button");
+
+    // Start Quiz Button Click Handler
+    startButton.addEventListener("click", () => {
+        // Add fade-out class to home screen
+        homeScreen.classList.add("fade-out");
+
+        // Transition to quiz page
+        setTimeout(() => {
+            homeScreen.style.display = "none"; // Hide home screen
+            quizContainer.style.display = "block"; // Show quiz container
+            progressContainer.style.display = "block"; // Show progress bar
+            document.body.classList.add("quiz-active"); // Trigger grey background
+
+            // Add fade-in class to quiz container
+            quizContainer.classList.add("fade-in");
+
+            loadQuestion(0); // Load the first question
+        }, 500); // Match the fade-out transition duration
+    });
+
+    initializeTeams(); // Initialize team data
+});
+
 const questions = [
     {
         question: "Where do you want your club to be located?",
@@ -44,14 +72,13 @@ const questions = [
     },
 ];
 
-// Initialize Variables
+
 let currentQuestionIndex = 0;
 let teamScores = {};
 let eligibleTeams = [];
-let selectedAnswers = new Set();
+let selectedAnswers = {}; // Object to store user's selected answers for each question
 let finalTeamVotes = {};
 
-// Nicknames for teams (example data structure)
 const teamNicknames = {
     "Arsenal": "The Gunners",
     "Aston Villa": "The Villans",
@@ -75,6 +102,7 @@ const teamNicknames = {
     "Wolverhampton Wanderers": "Wolves"
 };
 
+
 // Initialize Team Scores
 function initializeTeams() {
     const allTeams = new Set(questions.flatMap(q => q.answers.flatMap(a => a.teams)));
@@ -87,34 +115,30 @@ function updateProgress() {
     const progressBar = document.getElementById("progress-bar");
     const progressText = document.getElementById("progress-text");
 
-    const progress = ((currentQuestionIndex / (questions.length + 3)) * 100).toFixed(0); // +3 for final three questions
-    progressText.textContent = `${progress}% complete`;
+    const totalQuestions = questions.length + 3; // +3 for final three questions
+    const progress = ((currentQuestionIndex / totalQuestions) * 100).toFixed(0);
 
+    progressText.textContent = `${progress}% complete`;
     progressBar.style.width = `${progress}%`;
-    progressBar.style.background = `linear-gradient(to right, red, orange, green ${progress}%)`;
 }
 
 // Load a Question
-function loadQuestion() {
-    const container = document.getElementById("quiz-container");
-    container.innerHTML = "";
-
-    if (currentQuestionIndex >= questions.length) {
+function loadQuestion(index) {
+    if (index >= questions.length) {
         displayFinalThreeQuestions();
         return;
     }
 
+    currentQuestionIndex = index;
+    const container = document.getElementById("quiz-container");
+    container.innerHTML = "";
+
     updateProgress();
 
-    const questionData = questions[currentQuestionIndex];
+    const questionData = questions[index];
     const questionElement = document.createElement("h2");
     questionElement.textContent = questionData.question;
     container.appendChild(questionElement);
-
-    const subheading = document.createElement("p");
-    subheading.id = "subheading";
-    subheading.textContent = "Select multiple options for all questions";
-    container.appendChild(subheading);
 
     const optionsContainer = document.createElement("div");
     optionsContainer.className = "options-container";
@@ -123,12 +147,18 @@ function loadQuestion() {
         button.textContent = answer.text;
         button.className = "option-button";
 
+        // Highlight previously selected answer if it exists
+        if (selectedAnswers[index] && selectedAnswers[index].includes(answer.text)) {
+            button.classList.add("selected");
+        }
+
         button.onclick = () => {
-            if (selectedAnswers.has(answer.text)) {
-                selectedAnswers.delete(answer.text);
+            if (selectedAnswers[index] && selectedAnswers[index].includes(answer.text)) {
+                selectedAnswers[index] = selectedAnswers[index].filter(a => a !== answer.text);
                 button.classList.remove("selected");
             } else {
-                selectedAnswers.add(answer.text);
+                if (!selectedAnswers[index]) selectedAnswers[index] = [];
+                selectedAnswers[index].push(answer.text);
                 button.classList.add("selected");
             }
         };
@@ -137,32 +167,47 @@ function loadQuestion() {
     });
     container.appendChild(optionsContainer);
 
-    const nextButtonContainer = document.createElement("div");
-    nextButtonContainer.className = "next-button-container";
+    const buttonContainer = document.createElement("div");
+    buttonContainer.className = "button-container";
 
+    // Back Button
+    if (index > 0 && index < questions.length) {
+        const backButton = document.createElement("button");
+        backButton.textContent = "Back";
+        backButton.className = "back-question-button";
+        backButton.onclick = () => {
+            currentQuestionIndex--;
+            loadQuestion(currentQuestionIndex);
+        };
+        buttonContainer.appendChild(backButton);
+    }
+
+    // Next Button
     const nextButton = document.createElement("button");
     nextButton.textContent = "Next Question";
     nextButton.className = "next-question-button";
     nextButton.onclick = () => {
         processAnswers(questionData);
         currentQuestionIndex++;
-        loadQuestion();
+        loadQuestion(currentQuestionIndex);
     };
+    buttonContainer.appendChild(nextButton);
 
-    nextButtonContainer.appendChild(nextButton);
-    container.appendChild(nextButtonContainer);
+    container.appendChild(buttonContainer);
 }
 
 // Process Selected Answers
 function processAnswers(questionData) {
     const selectedTeams = new Set();
 
-    selectedAnswers.forEach(answerText => {
-        const answer = questionData.answers.find(a => a.text === answerText);
-        if (answer) {
-            answer.teams.forEach(team => selectedTeams.add(team));
-        }
-    });
+    if (selectedAnswers[currentQuestionIndex]) {
+        selectedAnswers[currentQuestionIndex].forEach(answerText => {
+            const answer = questionData.answers.find(a => a.text === answerText);
+            if (answer) {
+                answer.teams.forEach(team => selectedTeams.add(team));
+            }
+        });
+    }
 
     if (currentQuestionIndex === 0) {
         eligibleTeams = eligibleTeams.filter(team => selectedTeams.has(team));
@@ -173,8 +218,6 @@ function processAnswers(questionData) {
             }
         });
     }
-
-    selectedAnswers.clear();
 }
 
 // Display Final Three Questions
@@ -194,12 +237,15 @@ function askKitPreference(topTeams) {
     const container = document.getElementById("quiz-container");
     container.innerHTML = "";
 
+    currentQuestionIndex++;
+    updateProgress();
+
     const questionElement = document.createElement("h2");
     questionElement.textContent = "Which of these kits do you prefer?";
     container.appendChild(questionElement);
 
     const optionsContainer = document.createElement("div");
-    optionsContainer.className = "side-by-side-container"; // Add this class for flexbox styling
+    optionsContainer.className = "side-by-side-container";
 
     topTeams.forEach(team => {
         const kitImage = document.createElement("img");
@@ -220,12 +266,15 @@ function askManagerPreference(topTeams) {
     const container = document.getElementById("quiz-container");
     container.innerHTML = "";
 
+    currentQuestionIndex++;
+    updateProgress();
+
     const questionElement = document.createElement("h2");
     questionElement.textContent = "Which of these men do you trust more?";
     container.appendChild(questionElement);
 
     const optionsContainer = document.createElement("div");
-    optionsContainer.className = "side-by-side-container"; // Add this class for flexbox styling
+    optionsContainer.className = "side-by-side-container";
 
     topTeams.forEach(team => {
         const managerImage = document.createElement("img");
@@ -242,10 +291,12 @@ function askManagerPreference(topTeams) {
     container.appendChild(optionsContainer);
 }
 
-
 function askNicknamePreference(topTeams) {
     const container = document.getElementById("quiz-container");
     container.innerHTML = "";
+
+    currentQuestionIndex++;
+    updateProgress();
 
     const questionElement = document.createElement("h2");
     questionElement.textContent = "Choose one of these club nicknames?";
@@ -267,39 +318,26 @@ function displayResult(topTeams) {
     const container = document.getElementById("quiz-container");
     container.innerHTML = "";
 
-    // Determine the recommended team based on the majority of votes
     const recommendedTeam = Object.keys(finalTeamVotes).reduce((a, b) =>
         finalTeamVotes[a] > finalTeamVotes[b] ? a : b
     );
 
-    // Display the recommended team
     const resultElement = document.createElement("h2");
     resultElement.textContent = `Your Recommended Team: ${recommendedTeam}`;
     container.appendChild(resultElement);
 
-    // Add a brief description or call to action
     const descriptionElement = document.createElement("p");
     descriptionElement.textContent = `Learn more about ${recommendedTeam}!`;
     container.appendChild(descriptionElement);
 
-    // Display the team's badge
     const badgeImage = document.createElement("img");
-    badgeImage.src = `/badges/${recommendedTeam.toLowerCase().replace(/ /g, '_')}.jpg`; // Ensure filenames match this format
+    badgeImage.src = `/badges/${recommendedTeam.toLowerCase().replace(/ /g, '_')}.jpg`;
     badgeImage.alt = `${recommendedTeam} badge`;
     badgeImage.style.marginTop = "20px";
-    badgeImage.style.width = "150px"; // Adjust size as needed
+    badgeImage.style.width = "150px";
     badgeImage.style.height = "auto";
     badgeImage.style.display = "block";
     badgeImage.style.marginLeft = "auto";
     badgeImage.style.marginRight = "auto";
-    badgeImage.style.border = "0px solid #ccc";
-    badgeImage.style.borderRadius = "0px";
     container.appendChild(badgeImage);
 }
-
-
-// Start the Quiz
-document.addEventListener("DOMContentLoaded", () => {
-    initializeTeams();
-    loadQuestion();
-});

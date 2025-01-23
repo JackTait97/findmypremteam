@@ -1,85 +1,130 @@
 /* General Styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    color: #343a40;
     margin: 0;
     padding: 0;
     line-height: 1.6;
+    height: 100vh;
+    overflow: hidden; /* Prevent scrolling */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Header Styles */
-header {
-    text-align: center;
-    padding: 20px;
-    background-color: #0077b6;
-    color: #ffffff;
+/* Fade-out effect for home screen */
+.fade-out {
+    opacity: 0;
+    transition: opacity 2.5s ease;
 }
 
-header h1 {
-    font-size: 2.5rem;
-    margin: 0;
+/* Fade-in effect for quiz container */
+.fade-in {
+    opacity: 0;
+    transition: opacity 3.5s ease;
+    animation: fadeIn 3.5s forwards;
 }
 
-header p {
-    font-size: 1.2rem;
+/* Fade-in animation for quiz elements */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
 }
 
-/* Main Container Styles */
-main {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Footer Styles */
-footer {
-    text-align: center;
-    padding: 10px;
-    background-color: #0077b6;
-    color: #ffffff;
-    position: fixed;
-    bottom: 0;
+/* Home Screen Styles */
+#home-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    background-image: url('/stadium_background_test.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    text-align: center;
+    opacity: 1; /* Ensure it's initially visible */
+    transition: opacity 5.5s ease;
 }
 
-/* Buttons */
-button {
-    display: inline-block;
-    background-color: #0077b6;
-    color: #ffffff;
+/* Quiz Container Hidden by Default */
+#quiz-container {
+    display: none;
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    text-align: center;
+    opacity: 0; /* Hidden initially */
+}
+
+/* Progress Bar Hidden by Default */
+#progress-container {
+    display: none;
+    width: 100%;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Progress Bar */
+#progress-bar {
+    height: 100%;
+    background: black;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+
+#progress-text {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #343a40;
+}
+
+/* Title Styles */
+#title {
+    font-size: 38px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 5px; /* Reduced margin to bring subtitle closer */
+}
+
+/* Start Quiz Button Animation */
+@keyframes fade-in-fly-up {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#start-quiz-button {
+    opacity: 0;
+    transform: translateY(50px);
+    animation: fade-in-fly-up 2.5s 0.5s forwards;
+    background-color: #0f0e75;
+    color: white;
     border: none;
-    padding: 10px 20px;
-    margin: 10px 0;
-    border-radius: 5px;
+    padding: 15px 30px;
+    font-size: 1.5rem;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 1rem;
+    transition: background-color 0.2s ease;
 }
 
-button:hover {
-    background-color: lightblue;
+#start-quiz-button:hover {
+    background-color: #004c00;
 }
 
-/* Highlighted Elements */
-.highlight {
-    color: #ffba08;
-    font-weight: bold;
-}
-
-/* Responsive Design */
-@media (max-width: 600px) {
-    header h1 {
-        font-size: 2rem;
-    }
-
-    main {
-        padding: 10px;
-    }
-}
-/* Highlight selected options */
+/* Option Buttons */
 .option-button {
     margin: 5px;
     padding: 10px 20px;
@@ -106,22 +151,30 @@ button:hover {
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.2s;
+    margin-left: 30px;
+    margin-top: 30px;
 }
 
 .next-question-button:hover {
     background-color: #004c00;
 }
 
-/* Layout for Options and Next Button */
-.options-container {
-    margin-bottom: 20px;
+.back-question-button {
+    padding: 10px 20px;
+    background-color: #a10202; /* Dark green */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+    margin-top: 30px;
 }
 
-.next-button-container {
-    text-align: center;
+.back-question-button:hover {
+    background-color: #830202;
 }
-
-/* Side-by-Side Layout */
+/* Side-by-Side Layout for Final Questions */
 .side-by-side-container {
     display: flex;
     justify-content: center;
@@ -140,20 +193,42 @@ button:hover {
 
 .side-by-side-container img:hover {
     transform: scale(1.05); /* Slightly enlarge on hover */
-    border-color: #0077b6; /* Highlight border on hover */
-}
-
-#quiz-container img {
-    display: block;
-    margin: 20px auto;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    width: 150px; /* Adjust size as needed */
-    height: auto;
-    transition: transform 0.2s ease, border-color 0.2s ease;
-}
-
-#quiz-container img:hover {
-    transform: scale(1.05);
     border-color: #0077b6;
+}
+
+/* Question History Container */
+#question-history {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f0f0f0;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.history-item:hover {
+    background-color: #e0e0e0;
+}
+
+.history-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.dropdown-arrow {
+    font-size: 18px;
+    color: #666;
+    cursor: pointer;
 }
