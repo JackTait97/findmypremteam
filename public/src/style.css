@@ -4,8 +4,7 @@ body {
     margin: 0;
     padding: 0;
     line-height: 1.6;
-    height: 100vh;
-    overflow: hidden; /* Prevent scrolling */
+    height: 100%;/* Prevent scrolling */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -53,6 +52,9 @@ body {
 
 /* Quiz Container Hidden by Default */
 #quiz-container {
+    position: absolute;
+    top: 25%;
+    left: 30%;
     display: none;
     width: 100%;
     max-width: 800px;
@@ -64,11 +66,14 @@ body {
 /* Progress Bar Hidden by Default */
 #progress-container {
     display: none;
-    width: 100%;
+    width: 40%;
     height: 20px;
     background-color: #e0e0e0;
     border-radius: 10px;
     overflow: hidden;
+    position: absolute;
+    top: 80%;
+    left: 30%;
 }
 
 /* Progress Bar */

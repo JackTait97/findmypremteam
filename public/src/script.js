@@ -314,9 +314,28 @@ function askNicknamePreference(topTeams) {
     });
 }
 
+function parseCSV(text) {
+    const lines = text.split('\n');
+    const headers = lines[0].split(',');
+    const rows = lines.slice(1).map(line => {
+        const values = line.split(',');
+        return headers.reduce((obj, header, index) => {
+            obj[header.trim()] = values[index].trim();
+            return obj;
+        }, {});
+    });
+    return rows;
+}
+
 function displayResult(topTeams) {
     const container = document.getElementById("quiz-container");
     container.innerHTML = "";
+
+    // Hide the progress bar when reaching the final screen
+    const progressContainer = document.getElementById("progress-container");
+    if (progressContainer) {
+        progressContainer.style.display = "none";
+    }
 
     const recommendedTeam = Object.keys(finalTeamVotes).reduce((a, b) =>
         finalTeamVotes[a] > finalTeamVotes[b] ? a : b
@@ -340,4 +359,47 @@ function displayResult(topTeams) {
     badgeImage.style.marginLeft = "auto";
     badgeImage.style.marginRight = "auto";
     container.appendChild(badgeImage);
+
+    fetch('/src/club_bios.json')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        console.log('JSON file fetched successfully');
+        return response.json();
+    })
+    .then(data => {
+        console.log('JSON file content:', data);
+        console.log('Type of JSON data:', typeof data);
+        console.log('Is JSON data an array?', Array.isArray(data));
+        
+        // Log the entire JSON content to understand its structure
+        console.log('Full JSON data:', JSON.stringify(data, null, 2));
+        
+        // Assuming the JSON data is an object with a property that contains the array of teams
+        const teams = data.teams || data; // Adjust this based on the actual structure
+        if (!Array.isArray(teams)) {
+            throw new Error('Expected JSON data to be an array');
+        }
+        
+        const teamData = teams.find(row => row.Club === recommendedTeam);
+        console.log('Team data:', teamData);
+        
+        if (teamData) {
+            const overviewElement = document.createElement("p");
+            overviewElement.textContent = teamData.Overview;
+            container.appendChild(overviewElement);
+        } else {
+            console.log('No data found for the recommended team');
+        }
+
+        if (teamData) {
+            const historyElement = document.createElement("p");
+            historyElement.textContent = teamData.History;
+            container.appendChild(historyElement);
+        } else {
+            console.log('No history data found for the recommended team');
+        }
+    })
+    .catch(error => console.error('Error fetching the JSON file:', error));
 }
