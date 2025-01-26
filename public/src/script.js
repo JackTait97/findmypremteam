@@ -35,7 +35,7 @@ const questions = [
             { text: "The South (not including London)", teams: ["Southampton", "Ipswich Town", "Brighton & Hove Albion", "Bournemouth"] },
             { text: "London", teams: ["Chelsea", "Arsenal", "Fulham", "Tottenham Hotspur", "Brentford", "West Ham United", "Crystal Palace"] },
             { text: "Anywhere but London", teams: ["Liverpool", "Manchester City", "Newcastle United", "Manchester United", "Everton", "Nottingham Forest", "Aston Villa", "Leicester City", "Wolverhampton Wanderers", "Southampton", "Ipswich Town", "Brighton & Hove Albion", "Bournemouth"] },
-            { text: "I don’t care!", teams: ["Liverpool", "Manchester City", "Newcastle United", "Chelsea", "Arsenal", "Tottenham Hotspur", "Brighton & Hove Albion"] }
+            { text: "I don’t care!", teams: ["Liverpool", "Manchester City", "Newcastle United", "Manchester United", "Everton", "Nottingham Forest", "Aston Villa", "Leicester City", "Wolverhampton Wanderers", "Southampton", "Ipswich Town", "Brighton & Hove Albion", "Bournemouth", "Chelsea", "Arsenal", "Fulham", "Tottenham Hotspur", "Brentford", "West Ham United", "Crystal Palace"] }
         ]
     },
     {
@@ -328,14 +328,17 @@ function parseCSV(text) {
 }
 
 function displayResult(topTeams) {
-    const container = document.getElementById("quiz-container");
-    container.innerHTML = "";
+    // Hide the quiz container
+    const quizContainer = document.getElementById("quiz-container");
+    quizContainer.style.display = "none";
 
-    // Hide the progress bar when reaching the final screen
     const progressContainer = document.getElementById("progress-container");
-    if (progressContainer) {
-        progressContainer.style.display = "none";
-    }
+    progressContainer.style.display = "none";
+
+    // Show the final result container
+    const container = document.getElementById("final-result-container");
+    container.innerHTML = "";
+    container.style.display = "flex"; // Ensure it's displayed
 
     const recommendedTeam = Object.keys(finalTeamVotes).reduce((a, b) =>
         finalTeamVotes[a] > finalTeamVotes[b] ? a : b
@@ -361,45 +364,102 @@ function displayResult(topTeams) {
     container.appendChild(badgeImage);
 
     fetch('/src/club_bios.json')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        console.log('JSON file fetched successfully');
-        return response.json();
-    })
-    .then(data => {
-        console.log('JSON file content:', data);
-        console.log('Type of JSON data:', typeof data);
-        console.log('Is JSON data an array?', Array.isArray(data));
-        
-        // Log the entire JSON content to understand its structure
-        console.log('Full JSON data:', JSON.stringify(data, null, 2));
-        
-        // Assuming the JSON data is an object with a property that contains the array of teams
-        const teams = data.teams || data; // Adjust this based on the actual structure
-        if (!Array.isArray(teams)) {
-            throw new Error('Expected JSON data to be an array');
-        }
-        
-        const teamData = teams.find(row => row.Club === recommendedTeam);
-        console.log('Team data:', teamData);
-        
-        if (teamData) {
-            const overviewElement = document.createElement("p");
-            overviewElement.textContent = teamData.Overview;
-            container.appendChild(overviewElement);
-        } else {
-            console.log('No data found for the recommended team');
-        }
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            console.log('JSON file fetched successfully');
+            return response.json();
+        })
+        .then(data => {
+            console.log('Full JSON data:', JSON.stringify(data, null, 2));
+            
+            if (!Array.isArray(data)) {
+                throw new Error('Expected JSON data to be an array');
+            }
+            
+            const teamData = data.find(row => row.Club === recommendedTeam);
+            console.log('Team data:', teamData);
+            
+            if (teamData) {
+                const overviewElement = document.createElement("p");
+                overviewElement.textContent = teamData.Overview;
+                container.appendChild(overviewElement);
 
-        if (teamData) {
-            const historyElement = document.createElement("p");
-            historyElement.textContent = teamData.History;
-            container.appendChild(historyElement);
-        } else {
-            console.log('No history data found for the recommended team');
-        }
-    })
-    .catch(error => console.error('Error fetching the JSON file:', error));
+                // Create a button for the dropdown
+                const historyButton = document.createElement("button");
+                historyButton.textContent = "History";
+                historyButton.className = "collapsible";
+                container.appendChild(historyButton);
+
+                // Create a container for the history text
+                const historyContent = document.createElement("div");
+                historyContent.className = "content";
+                historyContent.style.display = "none"; // Hidden initially
+                const historyElement = document.createElement("p");
+                historyElement.textContent = teamData.History;
+                historyContent.appendChild(historyElement);
+                container.appendChild(historyContent);
+
+                // Add event listener to toggle the dropdown
+                historyButton.addEventListener("click", function() {
+                    if (historyContent.style.display === "none") {
+                        historyContent.style.display = "block";
+                    } else {
+                        historyContent.style.display = "none";
+                    }
+                });
+
+                // Create a button for the dropdown
+                const stadiumButton = document.createElement("button");
+                stadiumButton.textContent = "Stadium";
+                stadiumButton.className = "collapsible";
+                container.appendChild(stadiumButton);
+
+                // Create a container for the history text
+                const stadiumContent = document.createElement("div");
+                stadiumContent.className = "content";
+                stadiumContent.style.display = "none"; // Hidden initially
+                const stadiumElement = document.createElement("p");
+                stadiumElement.textContent = teamData.Stadium;
+                stadiumContent.appendChild(stadiumElement);
+                container.appendChild(stadiumContent);
+
+                // Add event listener to toggle the dropdown
+                stadiumButton.addEventListener("click", function() {
+                    if (stadiumContent.style.display === "none") {
+                        stadiumContent.style.display = "block";
+                    } else {
+                        stadiumContent.style.display = "none";
+                    }
+                });
+
+                // Create a button for the dropdown
+                const rivalsButton = document.createElement("button");
+                rivalsButton.textContent = "Rivalries";
+                rivalsButton.className = "collapsible";
+                container.appendChild(rivalsButton);
+
+                // Create a container for the history text
+                const rivalsContent = document.createElement("div");
+                rivalsContent.className = "content";
+                rivalsContent.style.display = "none"; // Hidden initially
+                const rivalsElement = document.createElement("p");
+                rivalsElement.textContent = teamData.Rivals;
+                rivalsContent.appendChild(rivalsElement);
+                container.appendChild(rivalsContent);
+
+                // Add event listener to toggle the dropdown
+                rivalsButton.addEventListener("click", function() {
+                    if (rivalsContent.style.display === "none") {
+                        rivalsContent.style.display = "block";
+                    } else {
+                        rivalsContent.style.display = "none";
+                    }
+                });
+            } else {
+                console.log('No data found for the recommended team');
+            }
+        })
+        .catch(error => console.error('Error fetching the JSON file:', error));
 }
