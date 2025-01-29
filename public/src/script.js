@@ -457,9 +457,53 @@ function displayResult(topTeams) {
                         rivalsContent.style.display = "none";
                     }
                 });
+
+                // Create a button for the dropdown
+                const managerButton = document.createElement("button");
+                managerButton.textContent = "Manager";
+                managerButton.className = "collapsible";
+                container.appendChild(managerButton);
+
+                // Create a container for the history text
+                const managerContent = document.createElement("div");
+                managerContent.className = "content";
+                managerContent.style.display = "none"; // Hidden initially
+                const managerElement = document.createElement("p");
+                managerElement.textContent = teamData.Manager;
+                managerContent.appendChild(managerElement);
+                container.appendChild(managerContent);
+
+                // Add event listener to toggle the dropdown
+                managerButton.addEventListener("click", function() {
+                    if (managerContent.style.display === "none") {
+                        managerContent.style.display = "block";
+                    } else {
+                        managerContent.style.display = "none";
+                    }
+                });
+
+
             } else {
                 console.log('No data found for the recommended team');
             }
         })
         .catch(error => console.error('Error fetching the JSON file:', error));
 }
+
+const url = "https://heisenbug-premier-league-live-scores-v1.p.rapidapi.com/api/premierleague/table ";
+fetch(url, {
+  method: "GET",
+  withCredentials: true,
+  headers: {
+    "x-rapidapi-host": "heisenbug-premier-league-live-scores-v1.p.rapidapi.com' ",
+    "x-rapidapi-key": "d79a9d016bmsha5e62d09c663d0ap1bb07ejsn2e6d03af8899"
+  }
+})
+  .then(resp => resp.json())
+  .then(function(data) {
+    console.log(data);
+  })
+  .catch(function(error) {
+    console.log(error);
+  });
+
