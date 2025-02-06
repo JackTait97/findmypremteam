@@ -4,13 +4,8 @@ body {
     margin: 0;
     padding: 0;
     line-height: 1.6;
-<<<<<<< Updated upstream
-    height: 100vh;
-    overflow: hidden; /* Prevent scrolling */
-=======
     min-height: 100%;  /* Ensure body is at least as tall as the viewport */
     overflow-y: auto;   /* Allow vertical scrolling */
->>>>>>> Stashed changes
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -59,16 +54,18 @@ body {
 
 /* Quiz Container Hidden by Default */
 #quiz-container {
-    display: none;
-    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centering trick */
+    display: flex;
+    width: 90%; /* Adjust width for responsiveness */
     max-width: 800px;
     padding: 20px;
     text-align: center;
     opacity: 0; /* Hidden initially */
 }
 
-<<<<<<< Updated upstream
-=======
 #quiz-container h2 {
     margin-top: 0; /* Remove default top margin */
     margin-bottom: 20px; /* Add some space below the heading */
@@ -164,15 +161,17 @@ body {
     overflow: hidden;
 }
 
->>>>>>> Stashed changes
 /* Progress Bar Hidden by Default */
 #progress-container {
     display: none;
-    width: 100%;
+    width: 40%;
     height: 20px;
     background-color: #e0e0e0;
     border-radius: 10px;
     overflow: hidden;
+    position: absolute;
+    top: 80%;
+    left: 30%;
 }
 
 /* Progress Bar */

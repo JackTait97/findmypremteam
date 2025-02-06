@@ -331,6 +331,9 @@ function displayResult(topTeams) {
     const container = document.getElementById("quiz-container");
     container.innerHTML = "";
 
+    const progressContainer = document.getElementById("progress-container");
+    progressContainer.style.display = "none";
+
     const recommendedTeam = Object.keys(finalTeamVotes).reduce((a, b) =>
         finalTeamVotes[a] > finalTeamVotes[b] ? a : b
     );
@@ -389,13 +392,6 @@ function displayResult(topTeams) {
     badgeImage.alt = `${recommendedTeam} badge`;
     badgeImage.style.width = "225px"; // 1.25 times the original size
     badgeImage.style.height = "auto";
-<<<<<<< Updated upstream
-    badgeImage.style.display = "block";
-    badgeImage.style.marginLeft = "auto";
-    badgeImage.style.marginRight = "auto";
-    container.appendChild(badgeImage);
-}
-=======
     
     const awayKitSection = createKitSection(
         `/away_kits/${recommendedTeam.toLowerCase().replace(/ /g, '_')}.jpg`,
@@ -544,4 +540,3 @@ function displayResult(topTeams) {
         .catch(error => console.error('Error fetching the JSON file:', error));
 }
 
->>>>>>> Stashed changes
