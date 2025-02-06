@@ -331,6 +331,9 @@ function displayResult(topTeams) {
     const container = document.getElementById("quiz-container");
     container.innerHTML = "";
 
+    const progressContainer = document.getElementById("progress-container");
+    progressContainer.style.display = "none";
+
     const recommendedTeam = Object.keys(finalTeamVotes).reduce((a, b) =>
         finalTeamVotes[a] > finalTeamVotes[b] ? a : b
     );
