@@ -61,6 +61,7 @@ body {
     display: flex;
     width: 90%; /* Adjust width for responsiveness */
     max-width: 800px;
+    max-height: 90vh;
     padding: 20px;
     text-align: center;
     opacity: 0; /* Hidden initially */
