@@ -4,11 +4,12 @@ body {
     margin: 0;
     padding: 0;
     line-height: 1.6;
-    height: 100%;/* Prevent scrolling */
-    overflow: auto;
+    min-height: 100%;  /* Ensure body is at least as tall as the viewport */
+    overflow-y: auto;   /* Allow vertical scrolling */
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
 }
 
 /* Fade-out effect for home screen */
@@ -73,26 +74,24 @@ body {
 }
 
 #final-result-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: none;
+    position: relative; /* Change from absolute to relative */
+    margin: 20px auto;  /* Center the container horizontally */
+    display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start; /* Align items from the top */
+    justify-content: flex-start;
     width: 90%;
-    max-width: 800px;
+    max-width: 80vw;
     padding: 20px;
     text-align: center;
     background-color: rgba(255, 255, 255, 0.9);
     border-radius: 10px;
     box-sizing: border-box;
-    overflow-y: auto; /* Allow scrolling if necessary *//* Prevent content from being cut off */
+    overflow: visible; /* Allow the content to overflow naturally */
 }
 
 #final-result-container h2 {
-    margin-top: 10%; /* Use viewport height units for responsive margin */
+    margin-top: 20px; /* Use viewport height units for responsive margin */
     margin-bottom: 20px; /* Add some space below the heading */
     font-size: 24px; /* Adjust font size as needed */
     color: #333; /* Adjust text color as needed */
@@ -139,7 +138,16 @@ body {
     background-color: transparent;
     margin-top: 10px;
     width: 100%;
-    max-width: 800px;
+    max-width: 75vw;
+}
+
+.dropdown-image {
+    float: right;
+    margin-left: 20px;
+    margin-bottom: 10px;
+    width: 20vw; /* Adjust width as needed */
+    height: auto;
+    align-items: right;
 }
 
 /* Expand height dynamically when a dropdown is opened */
@@ -186,7 +194,15 @@ body {
     font-size: 38px;
     color: white;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    margin-bottom: 5px; /* Reduced margin to bring subtitle closer */
+    margin-bottom: 0px; /* Reduced margin to bring subtitle closer */
+    padding-bottom: 1px;
+}
+
+#subtitle {
+    font-size: 24px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-top: 0px;
 }
 
 /* Start Quiz Button Animation */
