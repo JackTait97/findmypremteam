@@ -218,6 +218,19 @@ function processAnswers(questionData) {
             }
         });
     }
+
+    if (currentQuestionIndex === 1) {
+        const winningTeams = ["Liverpool", "Arsenal", "Manchester City"];
+        const underdogTeams = ["Southampton", "Wolverhampton Wanderers", "Ipswich Town", "Leicester City", "Everton"];
+
+        if (selectedAnswers[1].includes("I love an underdog. Bring on a relegation battle")) {
+            eligibleTeams = eligibleTeams.filter(team => !winningTeams.includes(team));
+        }
+
+        if (selectedAnswers[1].includes("I need my team to win all the time")) {
+            eligibleTeams = eligibleTeams.filter(team => !underdogTeams.includes(team));
+        }
+    }
 }
 
 // Display Final Three Questions
@@ -330,14 +343,205 @@ function displayResult(topTeams) {
     descriptionElement.textContent = `Learn more about ${recommendedTeam}!`;
     container.appendChild(descriptionElement);
 
+    const badgeContainer = document.createElement("div");
+    badgeContainer.style.display = "flex";
+    badgeContainer.style.justifyContent = "center";
+    badgeContainer.style.alignItems = "center";
+    badgeContainer.style.gap = "40px"; // Reduced gap for a tighter layout
+    container.appendChild(badgeContainer);
+    
+    // Function to create kit image with caption
+    function createKitSection(src, altText, captionText) {
+        const kitSection = document.createElement("div");
+        kitSection.style.display = "flex";
+        kitSection.style.flexDirection = "column";
+        kitSection.style.alignItems = "center";
+    
+        const kitImage = document.createElement("img");
+        kitImage.src = src;
+        kitImage.alt = altText;
+        kitImage.style.width = "130px";
+        kitImage.style.height = "130px";
+        kitImage.style.marginBottom = "5px";
+        kitImage.style.marginLeft = "40px";
+        kitImage.style.marginRight = "40px";// Reduced gap between image and caption
+    
+        const caption = document.createElement("p");
+        caption.textContent = captionText;
+        caption.style.margin = "0"; // Remove extra margin for tight alignment
+        caption.style.fontSize = "14px"; // Adjust font size for better fit
+        caption.style.textAlign = "center";
+    
+        kitSection.appendChild(kitImage);
+        kitSection.appendChild(caption);
+    
+        return kitSection;
+    }
+    
+    // Add home kit, badge, and away kit with captions
+    const homeKitSection = createKitSection(
+        `/home_kits/${recommendedTeam.toLowerCase().replace(/ /g, '_')}.jpg`,
+        `${recommendedTeam} home kit`,
+        "Home Kit"
+    );
     const badgeImage = document.createElement("img");
     badgeImage.src = `/badges/${recommendedTeam.toLowerCase().replace(/ /g, '_')}.jpg`;
     badgeImage.alt = `${recommendedTeam} badge`;
-    badgeImage.style.marginTop = "20px";
-    badgeImage.style.width = "150px";
+    badgeImage.style.width = "225px"; // 1.25 times the original size
     badgeImage.style.height = "auto";
+<<<<<<< Updated upstream
     badgeImage.style.display = "block";
     badgeImage.style.marginLeft = "auto";
     badgeImage.style.marginRight = "auto";
     container.appendChild(badgeImage);
 }
+=======
+    
+    const awayKitSection = createKitSection(
+        `/away_kits/${recommendedTeam.toLowerCase().replace(/ /g, '_')}.jpg`,
+        `${recommendedTeam} away kit`,
+        "Away Kit"
+    );
+    
+    badgeContainer.appendChild(homeKitSection);
+    badgeContainer.appendChild(badgeImage);
+    badgeContainer.appendChild(awayKitSection);
+    
+    fetch('/src/club_bios.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            console.log('JSON file fetched successfully');
+            return response.json();
+        })
+        .then(data => {
+            console.log('Full JSON data:', JSON.stringify(data, null, 2));
+            
+            if (!Array.isArray(data)) {
+                throw new Error('Expected JSON data to be an array');
+            }
+            
+            const teamData = data.find(row => row.Club === recommendedTeam);
+            console.log('Team data:', teamData);
+            
+            if (teamData) {
+                const overviewElement = document.createElement("p");
+                overviewElement.textContent = teamData.Overview;
+                container.appendChild(overviewElement);
+
+                // Create a button for the dropdown
+                const historyButton = document.createElement("button");
+                historyButton.textContent = "History";
+                historyButton.className = "collapsible";
+                container.appendChild(historyButton);
+
+                // Create a container for the history text
+                const historyContent = document.createElement("div");
+                historyContent.className = "content";
+                historyContent.style.display = "none"; // Hidden initially
+                const historyElement = document.createElement("p");
+                historyElement.textContent = teamData.History;
+                historyContent.appendChild(historyElement);
+                container.appendChild(historyContent);
+
+                // Add event listener to toggle the dropdown
+                historyButton.addEventListener("click", function() {
+                    if (historyContent.style.display === "none") {
+                        historyContent.style.display = "block";
+                    } else {
+                        historyContent.style.display = "none";
+                    }
+                });
+
+                // Create a button for the Stadium dropdown
+                const stadiumButton = document.createElement("button");
+                stadiumButton.textContent = "Stadium";
+                stadiumButton.className = "collapsible";
+                container.appendChild(stadiumButton);
+
+                // Create a container for the Stadium text and image
+                const stadiumContent = document.createElement("div");
+                stadiumContent.className = "content";
+                stadiumContent.style.display = "none"; // Hidden initially
+                const stadiumElement = document.createElement("p");
+                stadiumElement.textContent = teamData.Stadium;
+                const stadiumImage = document.createElement("img");
+                stadiumImage.src = `/stadiums/${recommendedTeam.toLowerCase().replace(/ /g, '_')}.jpg`;
+                stadiumImage.alt = `${recommendedTeam} stadium`;
+                stadiumImage.className = "dropdown-image";
+                stadiumContent.appendChild(stadiumImage);
+                stadiumContent.appendChild(stadiumElement);
+                container.appendChild(stadiumContent);
+
+                // Add event listener to toggle the Stadium dropdown
+                stadiumButton.addEventListener("click", function() {
+                    if (stadiumContent.style.display === "none") {
+                        stadiumContent.style.display = "block";
+                    } else {
+                        stadiumContent.style.display = "none";
+                    }
+                });
+
+                // Create a button for the dropdown
+                const rivalsButton = document.createElement("button");
+                rivalsButton.textContent = "Rivalries";
+                rivalsButton.className = "collapsible";
+                container.appendChild(rivalsButton);
+
+                // Create a container for the history text
+                const rivalsContent = document.createElement("div");
+                rivalsContent.className = "content";
+                rivalsContent.style.display = "none"; // Hidden initially
+                const rivalsElement = document.createElement("p");
+                rivalsElement.textContent = teamData.Rivals;
+                rivalsContent.appendChild(rivalsElement);
+                container.appendChild(rivalsContent);
+
+                // Add event listener to toggle the dropdown
+                rivalsButton.addEventListener("click", function() {
+                    if (rivalsContent.style.display === "none") {
+                        rivalsContent.style.display = "block";
+                    } else {
+                        rivalsContent.style.display = "none";
+                    }
+                });
+
+                // Create a button for the Manager dropdown
+                const managerButton = document.createElement("button");
+                managerButton.textContent = "Manager";
+                managerButton.className = "collapsible";
+                container.appendChild(managerButton);
+
+                // Create a container for the Manager text and image
+                const managerContent = document.createElement("div");
+                managerContent.className = "content";
+                managerContent.style.display = "none"; // Hidden initially
+                const managerElement = document.createElement("p");
+                managerElement.textContent = teamData.Manager;
+                const managerImage = document.createElement("img");
+                managerImage.src = `/managers/${recommendedTeam.toLowerCase().replace(/ /g, '_')}.jpg`;
+                managerImage.alt = `${recommendedTeam} manager`;
+                managerImage.className = "dropdown-image";
+                managerContent.appendChild(managerImage);
+                managerContent.appendChild(managerElement);
+                container.appendChild(managerContent);
+
+                // Add event listener to toggle the Manager dropdown
+                managerButton.addEventListener("click", function() {
+                    if (managerContent.style.display === "none") {
+                        managerContent.style.display = "block";
+                    } else {
+                        managerContent.style.display = "none";
+                    }
+                });
+
+
+            } else {
+                console.log('No data found for the recommended team');
+            }
+        })
+        .catch(error => console.error('Error fetching the JSON file:', error));
+}
+
+>>>>>>> Stashed changes
