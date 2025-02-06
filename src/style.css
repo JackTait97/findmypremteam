@@ -191,7 +191,7 @@ body {
 
 /* Title Styles */
 #title {
-    font-size: 38px;
+    font-size: 50vw;
     color: white;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     margin-bottom: 0px; /* Reduced margin to bring subtitle closer */
